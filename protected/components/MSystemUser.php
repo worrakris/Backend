@@ -19,8 +19,7 @@ class MSystemUser extends CWebUser {
     // access it by Yii::app()->user->username
     function getUsername() {
         if (!empty(Yii::app()->user->id)) {
-            $user = $this->loadUser(Yii::app()->user->id);
-            return $user->userAccount->username;
+            return Yii::app()->user->username;
         } else {
             return null;
         }
@@ -28,9 +27,13 @@ class MSystemUser extends CWebUser {
 
     function getFirstname() {
         if (!empty(Yii::app()->user->id)) {
-            $user = $this->loadUser(Yii::app()->user->id);
-            $fullName = $user->member_firstname;
-            return $fullName;
+            $user = $this->loadUserInfo(Yii::app()->user->id);
+            if (Yii::app()->user->userType === "Member") {
+                $firstname = $user->member_firstname;
+            } else {
+                $firstname = $user->staff_firstname;
+            }
+            return $firstname;
         } else {
             return null;
         }
@@ -38,9 +41,12 @@ class MSystemUser extends CWebUser {
 
     function getMiddlename() {
         if (!empty(Yii::app()->user->id)) {
-            $user = $this->loadUser(Yii::app()->user->id);
-            $fullName = $user->member_middlename;
-            return $fullName;
+            $middlename = "";
+            $user = $this->loadUserInfo(Yii::app()->user->id);
+            if (Yii::app()->user->userType === "Member") {
+                $middlename = $user->member_middlename;
+            }
+            return $middlename;
         } else {
             return null;
         }
@@ -48,19 +54,14 @@ class MSystemUser extends CWebUser {
 
     function getLastname() {
         if (!empty(Yii::app()->user->id)) {
-            $user = $this->loadUser(Yii::app()->user->id);
-            $fullName = $user->member_lastname;
-            return $fullName;
-        } else {
-            return null;
-        }
-    }
-
-    function getFullname() {
-        if (!empty(Yii::app()->user->id)) {
-            $user = $this->loadUser(Yii::app()->user->id);
-            $fullName = $user->member_firstname . " " . $user->member_middlename . " " . $user->member_lastname;
-            return $fullName;
+            $lastname = "";
+            $user = $this->loadUserInfo(Yii::app()->user->id);
+            if (Yii::app()->user->userType === "Member") {
+                $lastname = $user->member_lastname;
+            } else {
+                $lastname = $user->staff_lastname;
+            }
+            return $lastname;
         } else {
             return null;
         }
@@ -69,8 +70,12 @@ class MSystemUser extends CWebUser {
     // access it by Yii::app()->user->language
     function getLanguage() {
         if (!empty(Yii::app()->user->id)) {
+            $dfLang = "en";
             $user = $this->loadUser(Yii::app()->user->id);
-            return $user->member_default_language;
+            if (Yii::app()->user->userType === "Member") {
+                $dfLang = $user->member_default_language;
+            }
+            return $dfLang;
         } else {
             return null;
         }
@@ -96,20 +101,29 @@ class MSystemUser extends CWebUser {
         }
     }
 
-    protected function loadUser($id = null) {
+    protected function loadUserInfo($id = null) {
         if ($this->_model === null) {
-            if ($id !== null):
+            if ($id !== null) {
                 if (Yii::app()->user->userType === "Member") {
-
+                    $this->_model = SystemMember::model()->findByPk($id);
                 } else {
-
+                    $this->_model = POSStaff::model()->findByPk($id);
                 }
-            //$this->_model = Member::model()->with('userAccount')->findByPk($id);
-            else:
-                $this->_model->member_id = 0;
-            endif;
+            }
         }
         return $this->_model;
+    }
+
+    protected function loadUserAccountInfo($id = null) {
+        if ($this->_model === null) {
+            if ($id !== null) {
+
+            } else {
+
+            }
+        } else {
+
+        }
     }
 
 }

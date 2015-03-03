@@ -6,3 +6,11 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/Backend/images/site/favicon.ico
 ---
+2015/03/03 05:04:00 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "images/site/favicon.ico".' in C:\wamp\www\Backend\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\wamp\www\Backend\framework\web\CWebApplication.php(141): CWebApplication->runController('images/site/fav...')
+#1 C:\wamp\www\Backend\framework\base\CApplication.php(180): CWebApplication->processRequest()
+#2 C:\wamp\www\Backend\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/Backend/images/site/favicon.ico
+---
